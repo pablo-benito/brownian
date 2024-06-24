@@ -2,6 +2,7 @@ let HEIGHT = 500;
 let NUM_BALLS = 1200;
 let balls = [];
 let track = [];
+let max_velocity;
 
 
 function setup() {
@@ -12,15 +13,14 @@ function setup() {
 
   gui = createGui();
 
-  bigBall = new Ball(random_position = false, radius = 30, velocity = 0, b_color = 'Crimson');
+  bigBall = new Ball(random_position = false, radius = 30, velocity = 0);
   balls.push(bigBall);
-  // track.push(bigBall.position);
 
   for (var i = 0; i < NUM_BALLS; i++) {
     balls.push(new Ball());
   }
 
-
+  max_velocity = Math.max(...balls.map(obj => obj.velocity.magSq()));
 }
 
 function draw() {
@@ -34,9 +34,10 @@ function draw() {
       balls[i].checkCollision(j);
     }
   }
+  max_velocity = Math.max(...balls.map(obj => obj.velocity.mag()));
   energy = 0;
   balls.forEach(ball => {
-    
+
     ball.draw();
     ball.update();
 
@@ -44,16 +45,13 @@ function draw() {
     energy += ball.m * ball.velocity.magSq();
   })
 
-
   fill('white');
+  stroke('white');
   textSize(32);
-  text('Energy = ' + 0.5 * energy.toFixed(), 10, 50);
-  //  track.push(balls[0].position);
+  text('Total energy = ' + 0.5 * energy.toFixed() + '\n' +
+    'Big mass vel. = ' + balls[0].velocity.mag().toFixed(3) + '\n' +
+    'Max. velocity = ' + sqrt(max_velocity).toFixed(3), 10, 50);
 
-  //  stroke('green');
-  //  for(var i=0; i < track.length-1; i++) {
-  //    line(track[i].x,track[i].y, track[i+1].x, track[i+1].y);
-  //  }
 }
 
 function windowResized() {
